@@ -11,10 +11,11 @@ from kivymd.uix.dialog import MDDialog
 import requests
 from kivy.clock import Clock
 import clipboard
+import certifi
 
 def notificationCheck(dt):
-	res = requests.get("https://pastebin.com/raw/NdBzGvhq")
-	r = requests.get("https://pastebin.com/raw/fe76KF0B")
+	res = requests.get("https://pastebin.com/raw/NdBzGvhq", verify=certifi.where())
+	r = requests.get("https://pastebin.com/raw/fe76KF0B", verify=certifi.where())
 	if r.text == "1":
 		notification.notify(message=res.text)
 		Clock.unschedule(MainApp.check)
@@ -53,11 +54,11 @@ class MainApp(App):
 		pass
 
 	def option_callback(self, option):
-		print(option)
+		#print(option)
 		url = self.root.ids['home_screen'].ids.url
 		url = url.text
 		if url == "":
-			print("First enter an url!")
+			#print("First enter an url!")
 			err_alert = MDDialog(title="Error", text="Enter a YouTube video url to proceed.", size_hint=[.5, .5], auto_dismiss=False, events_callback=self.ok)
 			err_alert.open()
 		else:
@@ -68,34 +69,36 @@ class MainApp(App):
 		screen_manager.current = screen_name
 
 	def getThumbnail(self, url):
-		if url[4] == "s" and "youtube" in url:
-			#url = clipboard.paste()
-			url_id = url[32:]
-			thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
-			#print("HTTPS -",thumbnail)
-			self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
-		elif "http" and "youtube" in url:
-			url_id = url[31:]
-			thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
-			#print("HTTP -", thumbnail)
-			self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
-		elif "youtu.be" and "https" in url:
-			url_id = url[17:]
-			thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
-			self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
-		elif "youtu.be" and "http" in url:
-			url_id = url[16:]
-			thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
-			self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
-		else:
-			#print("Hi")
-			pass		
+		if url != "":
+			if url[4] == "s" and "youtube" in url:
+				#url = clipboard.paste()
+				url_id = url[32:]
+				thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
+				#print("HTTPS -",thumbnail)
+				self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
+			elif "http" and "youtube" in url:
+				url_id = url[31:]
+				thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
+				#print("HTTP -", thumbnail)
+				self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
+			elif "youtu.be" and "https" in url:
+				url_id = url[17:]
+				thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
+				self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
+			elif "youtu.be" and "http" in url:
+				url_id = url[16:]
+				thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
+				self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
+			else:
+				#print("Hi")
+				pass		
 
 	def getURL(self):
 		url = self.root.ids['home_screen'].ids.url
 		#print(url.text)
 		if url.text[0] == " ":
-			print("Remove Space from start")	
+			pass
+			#print("Remove Space from start")	
 		else:
 			url = url.text
 			MainApp.getThumbnail(self, url)
