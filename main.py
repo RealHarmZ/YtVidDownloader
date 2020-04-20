@@ -10,7 +10,7 @@ from plyer import notification
 from kivymd.uix.dialog import MDDialog
 import requests
 from kivy.clock import Clock
-import clipboard
+import pyperclip
 import certifi
 
 def notificationCheck(dt):
@@ -37,7 +37,7 @@ class MainApp(App):
 
 	def on_start(self):
 		#Create the dropdown menu
-		url = clipboard.paste()
+		url = pyperclip.paste()
 		if "youtube" or "youtu.be" in url: 
 			self.getThumbnail(url)
 		self.dropdown = MDDropdownMenu(width_mult=1)
@@ -71,7 +71,7 @@ class MainApp(App):
 	def getThumbnail(self, url):
 		if url != "":
 			if url[4] == "s" and "youtube" in url:
-				#url = clipboard.paste()
+				#url = pyperclip.paste()
 				url_id = url[32:]
 				thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
 				#print("HTTPS -",thumbnail)
