@@ -14,8 +14,8 @@ import pyperclip
 import certifi
 
 def notificationCheck(dt):
-	res = requests.get("https://pastebin.com/raw/NdBzGvhq", verify=certifi.where())
-	r = requests.get("https://pastebin.com/raw/fe76KF0B", verify=certifi.where())
+	res = requests.get("https://pastebin.com/raw/NdBzGvhq", ca_file=certifi.where())
+	r = requests.get("https://pastebin.com/raw/fe76KF0B", ca_file=certifi.where())
 	if r.text == "1":
 		notification.notify(message=res.text)
 		Clock.unschedule(MainApp.check)
@@ -37,9 +37,12 @@ class MainApp(App):
 
 	def on_start(self):
 		#Create the dropdown menu
-		url = pyperclip.paste()
-		if "youtube" or "youtu.be" in url: 
-			self.getThumbnail(url)
+		try:
+			url = pyperclip.paste()
+			if "youtube" or "youtu.be" in url: 
+				self.getThumbnail(url)
+		except Exceptions:
+			pass
 		self.dropdown = MDDropdownMenu(width_mult=1)
 		#Add items to the menu
 		res = ["720","360"]
