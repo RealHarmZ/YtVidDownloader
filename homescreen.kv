@@ -1,5 +1,9 @@
 
 <HomeScreen>:
+	download: download.__self__
+	search: search.__self__
+	url: url.__self__
+	thumbnail: thumbnail.__self__
 	FloatLayout:
 		MDTextFieldRound:
 			pos_hint: {"top":.9}
@@ -14,6 +18,7 @@
 			# icon: "magnify"
 			text: "Search"
 			on_release: app.getURL()
+			id: search
 		AsyncImage:
 			pos_hint: {"center_y": .5}
 			size_hint: 1, .5

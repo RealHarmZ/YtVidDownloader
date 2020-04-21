@@ -12,10 +12,13 @@ import requests
 from kivy.clock import Clock
 import pyperclip
 import certifi
+import os
+
+os.environ['SSL_CERT_FILE'] = certifi.where()
 
 def notificationCheck(dt):
-	res = requests.get("https://pastebin.com/raw/NdBzGvhq", ca_file=certifi.where())
-	r = requests.get("https://pastebin.com/raw/fe76KF0B", ca_file=certifi.where())
+	res = requests.get("https://pastebin.com/raw/NdBzGvhq")
+	r = requests.get("https://pastebin.com/raw/fe76KF0B")
 	if r.text == "1":
 		notification.notify(message=res.text)
 		Clock.unschedule(MainApp.check)
@@ -34,17 +37,12 @@ class MainApp(App):
 	theme_cls.theme_style = 'Dark'
 	dropdown = ObjectProperty()
 	check = Clock.schedule_interval(notificationCheck, 60)
+	
+		#Add items to the menu
+
 
 	def on_start(self):
-		#Create the dropdown menu
-		try:
-			url = pyperclip.paste()
-			if "youtube" or "youtu.be" in url: 
-				self.getThumbnail(url)
-		except Exceptions:
-			pass
-		self.dropdown = MDDropdownMenu(width_mult=1)
-		#Add items to the menu
+		self.dropdown = MDDropdownMenu(width_mult=1, disabled=True)
 		res = ["720","360"]
 		for i in res:
 			#print(i)
@@ -52,6 +50,13 @@ class MainApp(App):
 				{"viewclass":"MDMenuItem",
 				"text": i+"p",
 				"callback": self.option_callback})
+		#Create the dropdown menu
+		try:
+			url = pyperclip.paste()
+			if "youtube" or "youtu.be" in url: 
+				self.getThumbnail(url)
+		except:
+			pass
 
 	def ok(self, text, widget):
 		pass
@@ -72,26 +77,30 @@ class MainApp(App):
 		screen_manager.current = screen_name
 
 	def getThumbnail(self, url):
-		if url != "":
-			if url[4] == "s" and "youtube" in url:
-				#url = pyperclip.paste()
-				url_id = url[32:]
-				thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
-				#print("HTTPS -",thumbnail)
-				self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
-			elif "http" and "youtube" in url:
-				url_id = url[31:]
-				thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
-				#print("HTTP -", thumbnail)
-				self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
-			elif "youtu.be" and "https" in url:
-				url_id = url[17:]
-				thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
-				self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
-			elif "youtu.be" and "http" in url:
-				url_id = url[16:]
-				thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
-				self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
+		if "you" in url:
+			self.dropdown.disabled=False
+			try:
+				if url[4] == "s" and "youtube" in url:
+					#url = pyperclip.paste()
+					url_id = url[32:]
+					thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
+					#print("HTTPS -",thumbnail)
+					self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
+				elif "http" and "youtube" in url:
+					url_id = url[31:]
+					thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
+					#print("HTTP -", thumbnail)
+					self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
+				elif "youtu.be" and "https" in url:
+					url_id = url[17:]
+					thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
+					self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
+				elif "youtu.be" and "http" in url:
+					url_id = url[16:]
+					thumbnail = "https://img.youtube.com/vi/"+url_id+"/maxresdefault.jpg"
+					self.root.ids['home_screen'].ids.thumbnail.source = thumbnail
+			except:
+				pass
 			else:
 				#print("Hi")
 				pass		
@@ -99,14 +108,18 @@ class MainApp(App):
 	def getURL(self):
 		url = self.root.ids['home_screen'].ids.url
 		#print(url.text)
-		if url.text[0] == " ":
-			pass
-			#print("Remove Space from start")	
-		else:
-			url = url.text
-			MainApp.getThumbnail(self, url)
-			pass
-	
+		if url != "":
+			try:
+				if url.text[0] == " ":
+					pass
+			except:
+				pass
+
+				#print("Remove Space from start")	
+			else:
+				url = url.text
+				MainApp.getThumbnail(self, url)
+		
 
 MainApp().run()
 
