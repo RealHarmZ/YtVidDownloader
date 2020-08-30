@@ -1,2 +1,2 @@
 # YtVidDownloader
-YouTube Video Downloader - My First Kivy App
+YouTube Video Downloader - App
